@@ -1,0 +1,23 @@
+# Internal planning docs
+blueprint.md
+audit_gemini_*.md
+codex_briefing_*.md
+codex_done_*.txt
+codex_ext01_log.txt
+competitor_research_*.md
+outreach_mail.md
+CLAUDE.md
+
+# Extension build artifacts
+packages/extension/node_modules/
+packages/extension/dist/
+
+# Internal artifacts
+landing/lull_landing_screenshot.png
+landing/demo.html
+landing/live_check.png
+landing/competitor_kickbacks.png
+
+# System
+.DS_Store
+*.log

@@ -1,0 +1,61 @@
+{
+  "name": "lull",
+  "displayName": "Lull",
+  "description": "Earn while AI thinks. Quiet sponsor cards during AI wait states.",
+  "version": "0.1.0",
+  "publisher": "lull",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/Rorschach540/lull.git" },
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "icon": "images/lull-icon.png",
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [{
+        "id": "lull-sidebar",
+        "title": "Lull",
+        "icon": "images/lull-icon.svg"
+      }]
+    },
+    "views": {
+      "lull-sidebar": [{
+        "type": "webview",
+        "id": "lull.adView",
+        "name": "Lull"
+      }]
+    },
+    "commands": [
+      { "command": "lull.resetId",      "title": "Lull: Reset my ID" },
+      { "command": "lull.simulateAd",   "title": "Lull: Simulate AI call (show ad)" },
+      { "command": "lull.simulateIdle", "title": "Lull: Simulate idle state" }
+    ],
+    "configuration": {
+      "title": "Lull",
+      "properties": {
+        "lull.backendUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Lull backend URL. Leave empty to use built-in demo ads."
+        },
+        "lull.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable Lull."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "dev": "node esbuild.config.js --watch",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}
