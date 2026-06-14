@@ -76,7 +76,7 @@
   "scripts": {
     "build": "node esbuild.config.js",
     "dev": "node esbuild.config.js --watch",
-    "package": "vsce package --no-dependencies"
+    "package": "node node_modules/@vscode/vsce/out/main.js package --no-dependencies"
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
