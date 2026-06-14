@@ -2,7 +2,7 @@
 
 > Earn while AI thinks. One quiet sponsor card during every AI wait state. You keep 70%.
 
-**[Install free →](https://github.com/lull-app/lull/releases)**
+**[lull-app.github.io](https://lull-app.github.io)** · **[Install free →](https://github.com/lull-app/lull/releases)**
 
 ---
 
