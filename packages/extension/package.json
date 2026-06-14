@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "publisher": "lull",
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/Rorschach540/lull.git" },
+  "repository": { "type": "git", "url": "https://github.com/lull-app/lull.git" },
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Other"],
   "icon": "images/lull-icon.png",

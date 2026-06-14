@@ -2,7 +2,7 @@
 
 > Earn while AI thinks. One quiet sponsor card during every AI wait state. You keep 70%.
 
-**[Install free →](https://github.com/Rorschach540/lull/releases)**
+**[Install free →](https://github.com/lull-app/lull/releases)**
 
 ---
 
@@ -12,7 +12,7 @@ Lull shows a single, non-intrusive sponsor card in the VS Code / Cursor sidebar 
 
 ## Install
 
-1. Download `lull-0.1.0.vsix` from [Releases](https://github.com/Rorschach540/lull/releases)
+1. Download `lull-0.1.0.vsix` from [Releases](https://github.com/lull-app/lull/releases)
 2. In VS Code / Cursor: `Extensions → ⋯ → Install from VSIX…`
 3. Click the Lull icon in the Activity Bar
 
