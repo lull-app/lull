@@ -5,31 +5,57 @@
   "version": "0.1.0",
   "publisher": "lull",
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/lull-app/lull.git" },
-  "engines": { "vscode": "^1.85.0" },
-  "categories": ["Other"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lull-app/lull.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
   "icon": "images/lull-icon.png",
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
-      "activitybar": [{
-        "id": "lull-sidebar",
-        "title": "Lull",
-        "icon": "images/lull-icon.svg"
-      }]
+      "activitybar": [
+        {
+          "id": "lull-sidebar",
+          "title": "Lull",
+          "icon": "images/lull-icon.svg"
+        }
+      ]
     },
     "views": {
-      "lull-sidebar": [{
-        "type": "webview",
-        "id": "lull.adView",
-        "name": "Lull"
-      }]
+      "lull-sidebar": [
+        {
+          "type": "webview",
+          "id": "lull.adView",
+          "name": "Lull"
+        }
+      ]
     },
     "commands": [
-      { "command": "lull.resetId",      "title": "Lull: Reset my ID" },
-      { "command": "lull.simulateAd",   "title": "Lull: Simulate AI call (show ad)" },
-      { "command": "lull.simulateIdle", "title": "Lull: Simulate idle state" }
+      {
+        "command": "lull.resetId",
+        "title": "Lull: Reset my ID"
+      },
+      {
+        "command": "lull.simulateAd",
+        "title": "Lull: Simulate AI call (show ad)"
+      },
+      {
+        "command": "lull.simulateIdle",
+        "title": "Lull: Simulate idle state"
+      },
+      {
+        "command": "lull.openAdUrl",
+        "title": "Lull: Open sponsor link"
+      }
     ],
     "configuration": {
       "title": "Lull",
@@ -54,7 +80,7 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
-    "@vscode/vsce": "^3.0.0",
+    "@vscode/vsce": "3.9.2",
     "esbuild": "^0.20.0",
     "typescript": "^5.3.0"
   }

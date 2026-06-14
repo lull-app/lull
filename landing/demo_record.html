@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Lull — Demo Recording</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1e1e1e;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  width: 1280px; height: 720px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* Title bar */
+.titlebar {
+  height: 38px; background: #323233;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+}
+.titlebar-dots { position: absolute; left: 14px; display: flex; gap: 8px; }
+.dot { width: 13px; height: 13px; border-radius: 50%; }
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+.titlebar-title { font-size: 13px; color: #cccccc; font-family: -apple-system, sans-serif; letter-spacing: 0; }
+
+/* Main layout */
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* Activity bar */
+.activitybar {
+  width: 48px; background: #2c2c2c; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 10px; gap: 4px;
+}
+.ab-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.5; }
+.ab-icon:hover { opacity: 0.9; }
+.ab-icon.active { opacity: 1; border-left: 2px solid #6ee7b7; border-radius: 0; }
+.ab-icon svg { width: 22px; height: 22px; }
+.ab-spacer { flex: 1; }
+
+/* Sidebar (Lull panel) */
+.sidebar {
+  width: 280px; background: #252526; border-right: 1px solid #3c3c3c;
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+.sidebar-header {
+  padding: 10px 14px 8px;
+  font-family: -apple-system, sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: #bbbbbb;
+  border-bottom: 1px solid #3c3c3c;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-content { flex: 1; padding: 12px; display: flex; flex-direction: column; }
+
+/* Lull idle panel */
+.lull-idle {
+  background: #1a1a1f; border: 1px solid #2a2a30;
+  border-radius: 10px; padding: 12px 14px;
+}
+.lull-idle-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.lull-amount { font-size: 20px; font-weight: 700; color: #6ee7b7; font-variant-numeric: tabular-nums; }
+.lull-dot { width: 7px; height: 7px; border-radius: 50%; background: #6ee7b7; }
+.lull-row { display: flex; gap: 10px; }
+.lull-stat { flex: 1; background: #111115; border: 1px solid #222228; border-radius: 7px; padding: 7px 9px; }
+.lull-stat-n { font-size: 13px; font-weight: 600; color: #ccc; font-family: -apple-system, sans-serif; }
+.lull-stat-l { font-size: 9px; color: #444; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, sans-serif; }
+.lull-waiting { font-size: 10px; color: #333; margin-top: 8px; text-align: center; font-family: -apple-system, sans-serif; }
+
+/* Lull ad panel */
+.lull-ad { display: none; animation: rise 0.4s cubic-bezier(.16,1,.3,1); }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.ad-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.ad-badge {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+  color: #555; background: #161618; border: 1px solid #222; padding: 2px 8px; border-radius: 20px;
+  font-family: -apple-system, sans-serif;
+}
+.ad-timer {
+  font-size: 10px; color: #444; background: #111; padding: 2px 8px; border-radius: 20px;
+  font-variant-numeric: tabular-nums; font-family: -apple-system, sans-serif;
+}
+.ad-card {
+  background: linear-gradient(145deg, #131316, #0f0f12);
+  border: 1px solid #1f1f24; border-radius: 12px; overflow: hidden;
+}
+.ad-accent { height: 2px; }
+.ad-body { padding: 13px; }
+.ad-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ad-logo {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 17px; flex-shrink: 0;
+  font-family: -apple-system, sans-serif;
+}
+.ad-name { font-size: 13px; font-weight: 700; color: #ececec; font-family: -apple-system, sans-serif; }
+.ad-tagline { font-size: 11px; color: #777; line-height: 1.55; margin-bottom: 12px; font-family: -apple-system, sans-serif; }
+.ad-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-weight: 600; font-size: 11px; padding: 6px 13px; border-radius: 7px;
+  text-decoration: none; cursor: pointer; font-family: -apple-system, sans-serif;
+}
+.ad-footer { margin-top: 8px; font-size: 9px; color: #333; text-align: right; font-family: -apple-system, sans-serif; }
+
+/* Editor area */
+.editor { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Editor tabs */
+.tabs {
+  height: 36px; background: #2d2d2d;
+  display: flex; align-items: end; border-bottom: 1px solid #3c3c3c;
+}
+.tab {
+  height: 32px; padding: 0 16px; display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: #999; background: #2d2d2d; border-right: 1px solid #3c3c3c;
+  cursor: pointer; font-family: -apple-system, sans-serif;
+}
+.tab.active { background: #1e1e1e; color: #ccc; border-top: 1px solid #6ee7b7; }
+.tab-dot { width: 8px; height: 8px; border-radius: 50%; background: #e6c07b; }
+
+/* Code area — intentionally dimmed so focus stays on Lull panel */
+.code-area { flex: 1; padding: 16px 0; overflow: hidden; display: flex; opacity: 0.18; }
+.line-nums { width: 48px; text-align: right; padding-right: 16px; color: #555; font-size: 14px; line-height: 22px; user-select: none; flex-shrink: 0; }
+.code { flex: 1; font-size: 14px; line-height: 22px; color: #888; overflow: hidden; }
+.kw { color: #888; }
+.fn { color: #888; }
+.str { color: #888; }
+.cm { color: #888; }
+.type { color: #888; }
+.num { color: #888; }
+.op { color: #888; }
+
+/* Status bar */
+.statusbar {
+  height: 24px; background: #007acc;
+  display: flex; align-items: center; padding: 0 12px; gap: 16px;
+  font-size: 12px; color: rgba(255,255,255,0.9); font-family: -apple-system, sans-serif;
+  flex-shrink: 0;
+}
+.sb-left { display: flex; align-items: center; gap: 14px; }
+.sb-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.sb-spinner {
+  display: inline-block; width: 11px; height: 11px;
+  border: 1.5px solid rgba(255,255,255,0.3); border-top-color: white;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.sb-ai { display: flex; align-items: center; gap: 5px; opacity: 0; transition: opacity 0.3s; }
+.sb-ai.visible { opacity: 1; }
+
+/* Intro overlay */
+.intro {
+  position: fixed; inset: 0; background: #1e1e1e;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 100; gap: 16px;
+}
+.intro-logo { font-size: 48px; font-weight: 800; color: #6ee7b7; letter-spacing: -2px; font-family: -apple-system, sans-serif; }
+.intro-sub { font-size: 18px; color: #555; font-family: -apple-system, sans-serif; }
+.intro-countdown { font-size: 14px; color: #333; font-family: -apple-system, sans-serif; margin-top: 8px; }
+
+/* Earnings animation */
+.earning-toast {
+  position: fixed; bottom: 40px; right: 20px;
+  background: rgba(110,231,183,0.15); border: 1px solid rgba(110,231,183,0.3);
+  color: #6ee7b7; font-size: 13px; font-weight: 600;
+  padding: 8px 14px; border-radius: 8px;
+  font-family: -apple-system, sans-serif;
+  opacity: 0; transition: opacity 0.3s;
+}
+.earning-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- Intro overlay -->
+<div class="intro" id="intro">
+  <div class="intro-logo">lull</div>
+  <div class="intro-sub">Earn while AI thinks.</div>
+  <div class="intro-countdown" id="introCountdown" style="display:none">Starting in 3…</div>
+  <button id="startBtn" onclick="beginCountdown()" style="margin-top:24px;background:#6ee7b7;color:#062b1e;font-weight:700;font-size:16px;padding:14px 32px;border:none;border-radius:10px;cursor:pointer;font-family:-apple-system,sans-serif;">
+    ▶ Aufnahme starten
+  </button>
+</div>
+
+<!-- Earnings toast -->
+<div class="earning-toast" id="toast">+$0.015 earned</div>
+
+<!-- Title bar -->
+<div class="titlebar">
+  <div class="titlebar-dots">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <div class="titlebar-title">api/routes/auth.ts — project</div>
+</div>
+
+<div class="main">
+
+  <!-- Activity bar -->
+  <div class="activitybar">
+    <div class="ab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+    <div class="ab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+    </div>
+    <div class="ab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="ab-icon active" id="lullIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+        <circle cx="12" cy="12" r="9.5"/>
+        <path d="M3.8 13.6 C 5.8 7.8, 13 5.8, 16 10 C 18 12.8, 15.9 15.8, 13.4 14.9 C 11.7 14.3, 12.2 11.7, 14 12.3"/>
+      </svg>
+    </div>
+    <div class="ab-spacer"></div>
+    <div class="ab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </div>
+  </div>
+
+  <!-- Lull sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span>LULL</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    </div>
+    <div class="sidebar-content">
+
+      <!-- Idle state -->
+      <div class="lull-idle" id="lullIdle">
+        <div class="lull-idle-top">
+          <div class="lull-amount" id="earningsDisplay">$0.000</div>
+          <div class="lull-dot" id="idleDot" style="animation: none; opacity: 0.25;"></div>
+        </div>
+        <div class="lull-row">
+          <div class="lull-stat">
+            <div class="lull-stat-n" id="impressionDisplay">0</div>
+            <div class="lull-stat-l">Impressions</div>
+          </div>
+          <div class="lull-stat">
+            <div class="lull-stat-n" id="earnedDisplay">$0.00</div>
+            <div class="lull-stat-l">Earned</div>
+          </div>
+        </div>
+        <div class="lull-waiting" id="waitingText">waiting for AI activity…</div>
+      </div>
+
+      <!-- Ad state -->
+      <div class="lull-ad" id="lullAd">
+        <div class="ad-topbar">
+          <span class="ad-badge">Sponsored</span>
+          <span class="ad-timer" id="adTimer">15s</span>
+        </div>
+        <div class="ad-card">
+          <div class="ad-accent" id="adAccent"></div>
+          <div class="ad-body">
+            <div class="ad-brand">
+              <div class="ad-logo" id="adLogo"></div>
+              <div class="ad-name" id="adName"></div>
+            </div>
+            <div class="ad-tagline" id="adTagline"></div>
+            <div class="ad-cta" id="adCta"></div>
+          </div>
+        </div>
+        <div class="ad-footer">Ad · Lull</div>
+      </div>
+
+      <!-- Session stats (always visible, fills space) -->
+      <div style="margin-top:14px;padding:10px 12px;background:#111114;border:1px solid #1e1e22;border-radius:9px;">
+        <div style="font-size:9px;color:#333;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;font-family:-apple-system,sans-serif;">Today's session</div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;background:#0d0d10;border:1px solid #1a1a1e;border-radius:6px;padding:6px 8px;">
+            <div style="font-size:12px;font-weight:600;color:#aaa;font-family:-apple-system,sans-serif;" id="sessImpr">0</div>
+            <div style="font-size:8px;color:#333;text-transform:uppercase;letter-spacing:.4px;margin-top:1px;font-family:-apple-system,sans-serif;">Impressions</div>
+          </div>
+          <div style="flex:1;background:#0d0d10;border:1px solid #1a1a1e;border-radius:6px;padding:6px 8px;">
+            <div style="font-size:12px;font-weight:600;color:#aaa;font-family:-apple-system,sans-serif;" id="sessEarned">$0.00</div>
+            <div style="font-size:8px;color:#333;text-transform:uppercase;letter-spacing:.4px;margin-top:1px;font-family:-apple-system,sans-serif;">Earned</div>
+          </div>
+          <div style="flex:1;background:#0d0d10;border:1px solid #1a1a1e;border-radius:6px;padding:6px 8px;">
+            <div style="font-size:12px;font-weight:600;color:#aaa;font-family:-apple-system,sans-serif;">2h 14m</div>
+            <div style="font-size:8px;color:#333;text-transform:uppercase;letter-spacing:.4px;margin-top:1px;font-family:-apple-system,sans-serif;">Active</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payout section -->
+      <div style="margin-top:10px;padding:10px 12px;background:#111114;border:1px solid #1e1e22;border-radius:9px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:9px;color:#333;text-transform:uppercase;letter-spacing:.6px;font-family:-apple-system,sans-serif;">Payout</div>
+          <div style="font-size:9px;color:#2a4a3a;font-family:-apple-system,sans-serif;">USDC · Stripe</div>
+        </div>
+        <div style="background:#0a0a0d;border-radius:5px;height:4px;overflow:hidden;">
+          <div style="height:100%;width:12%;background:linear-gradient(90deg,#1a3a2a,#6ee7b7);border-radius:5px;" id="payoutBar"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+          <div style="font-size:9px;color:#2a4a3a;font-family:-apple-system,sans-serif;" id="payoutAmt">$0.00 / $20.00</div>
+          <div style="font-size:9px;color:#222;font-family:-apple-system,sans-serif;">min. payout</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <div class="editor">
+    <div class="tabs">
+      <div class="tab active"><span class="tab-dot"></span> auth.ts</div>
+      <div class="tab">user.ts</div>
+      <div class="tab">db.ts</div>
+    </div>
+    <div class="code-area">
+      <div class="line-nums">
+        1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30
+      </div>
+      <div class="code">
+<span class="cm">// Authentication middleware</span><br>
+<span class="kw">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span><br>
+<span class="kw">import</span> { <span class="fn">verifyToken</span> } <span class="kw">from</span> <span class="str">'../lib/jwt'</span><br>
+<span class="kw">import</span> { <span class="type">User</span> } <span class="kw">from</span> <span class="str">'../models/user'</span><br>
+<br>
+<span class="kw">export async function</span> <span class="fn">authenticate</span>(<br>
+&nbsp;&nbsp;req: <span class="type">Request</span>,<br>
+&nbsp;&nbsp;res: <span class="type">Response</span>,<br>
+&nbsp;&nbsp;next: <span class="type">NextFunction</span><br>
+): <span class="type">Promise</span>&lt;<span class="kw">void</span>&gt; {<br>
+&nbsp;&nbsp;<span class="kw">const</span> token = req.headers.authorization<span class="op">?.</span><span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>]<br>
+<br>
+&nbsp;&nbsp;<span class="kw">if</span> (!token) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'Unauthorized'</span> })<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span><br>
+&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;<span class="kw">try</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">const</span> payload = <span class="kw">await</span> <span class="fn">verifyToken</span>(token)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">const</span> user = <span class="kw">await</span> <span class="type">User</span>.<span class="fn">findById</span>(payload.sub)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (!user) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'User not found'</span> })<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;req.user = user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">next</span>()<br>
+&nbsp;&nbsp;} <span class="kw">catch</span> (err) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'Invalid token'</span> })<br>
+&nbsp;&nbsp;}<br>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Status bar -->
+<div class="statusbar">
+  <div class="sb-left">
+    <span>main</span>
+    <span>TypeScript</span>
+    <div class="sb-ai" id="sbAi">
+      <div class="sb-spinner"></div>
+      <span id="sbAiText">Claude is thinking…</span>
+    </div>
+  </div>
+  <div class="sb-right">
+    <span>Ln 18, Col 42</span>
+    <span>UTF-8</span>
+  </div>
+</div>
+
+<script>
+const ads = [
+  {
+    logo: '▲', name: 'Vercel',
+    tagline: 'Deploy instantly. Scale globally. Ship without thinking about infra.',
+    cta: 'Start deploying →',
+    color: '#ffffff'
+  },
+  {
+    logo: '⚡', name: 'Clerk',
+    tagline: 'Auth that takes minutes, not days. Built for modern dev stacks.',
+    cta: 'Add auth free →',
+    color: '#6c47ff'
+  },
+];
+
+let totalEarnings = 0;
+let impressions = 0;
+let adIndex = 0;
+let adTimerVal = 15;
+let adInterval = null;
+
+function hex2rgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+
+function showAd(ad) {
+  const idle = document.getElementById('lullIdle');
+  const adEl = document.getElementById('lullAd');
+  const {r,g,b} = hex2rgb(ad.color);
+
+  document.getElementById('adLogo').textContent = ad.logo;
+  document.getElementById('adLogo').style.background = `rgba(${r},${g},${b},0.15)`;
+  document.getElementById('adLogo').style.color = ad.color;
+  document.getElementById('adLogo').style.border = `1px solid rgba(${r},${g},${b},0.25)`;
+  document.getElementById('adName').textContent = ad.name;
+  document.getElementById('adTagline').textContent = ad.tagline;
+  document.getElementById('adCta').textContent = ad.cta;
+  document.getElementById('adCta').style.background = `rgba(${r},${g},${b},0.12)`;
+  document.getElementById('adCta').style.border = `1px solid rgba(${r},${g},${b},0.3)`;
+  document.getElementById('adCta').style.color = ad.color;
+  document.getElementById('adAccent').style.background = `linear-gradient(90deg, rgba(${r},${g},${b},0), rgba(${r},${g},${b},0.9), rgba(${r},${g},${b},0))`;
+
+  idle.style.display = 'none';
+  adEl.style.display = 'block';
+  adEl.style.animation = 'none';
+  void adEl.offsetHeight;
+  adEl.style.animation = 'rise 0.4s cubic-bezier(.16,1,.3,1)';
+
+  // Status bar
+  document.getElementById('sbAi').classList.add('visible');
+  document.getElementById('sbAiText').textContent = `${ad.name === 'Fly.io' ? 'Claude' : 'Claude'} is thinking…`;
+
+  // Timer
+  adTimerVal = 15;
+  document.getElementById('adTimer').textContent = '15s';
+  if (adInterval) clearInterval(adInterval);
+  adInterval = setInterval(() => {
+    adTimerVal--;
+    document.getElementById('adTimer').textContent = adTimerVal + 's';
+    if (adTimerVal <= 0) clearInterval(adInterval);
+  }, 1000);
+
+  // Earnings
+  impressions++;
+  totalEarnings += 0.015;
+  document.getElementById('impressionDisplay').textContent = impressions;
+  document.getElementById('earningsDisplay').textContent = '$' + totalEarnings.toFixed(3);
+  document.getElementById('earnedDisplay').textContent = '$' + (impressions * 0.015).toFixed(2);
+  document.getElementById('sessImpr').textContent = impressions;
+  document.getElementById('sessEarned').textContent = '$' + totalEarnings.toFixed(2);
+  const pct = Math.min((totalEarnings / 20) * 100, 100);
+  document.getElementById('payoutBar').style.width = pct + '%';
+  document.getElementById('payoutAmt').textContent = '$' + totalEarnings.toFixed(2) + ' / $20.00';
+
+  // Toast
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function showIdle() {
+  document.getElementById('lullIdle').style.display = 'block';
+  document.getElementById('lullAd').style.display = 'none';
+  document.getElementById('sbAi').classList.remove('visible');
+  document.getElementById('idleDot').style.opacity = '0.25';
+  document.getElementById('idleDot').style.animation = 'none';
+  document.getElementById('waitingText').textContent = 'waiting for AI activity…';
+}
+
+function activateAI() {
+  // Pulse the dot
+  document.getElementById('idleDot').style.opacity = '1';
+  document.getElementById('idleDot').style.animation = 'pulse 1s ease-in-out 3';
+  document.getElementById('waitingText').textContent = '● AI activity detected';
+  setTimeout(() => {
+    showAd(ads[adIndex % ads.length]);
+    adIndex++;
+  }, 600);
+}
+
+// Sequence timeline (ms)
+// 0-3s: intro countdown
+// 3s: scene starts (idle)
+// 5s: first AI call → Supabase ad
+// 21s: idle
+// 24s: second AI call → Railway ad
+// 35s: end
+
+function startSequence() {
+  showIdle();
+
+  // First AI call at t=2s
+  setTimeout(activateAI, 2000);
+
+  // Back to idle at t=18s
+  setTimeout(showIdle, 18000);
+
+  // Second AI call at t=21s
+  setTimeout(activateAI, 21000);
+
+  // Back to idle + end state at t=35s
+  setTimeout(() => {
+    showIdle();
+    document.getElementById('waitingText').textContent = 'waiting for AI activity…';
+  }, 35000);
+}
+
+function beginCountdown() {
+  document.getElementById('startBtn').style.display = 'none';
+  const introCountdown = document.getElementById('introCountdown');
+  introCountdown.style.display = 'block';
+  const introEl = document.getElementById('intro');
+  let introSec = 15;
+  introCountdown.textContent = `Starting in ${introSec}…`;
+  const introTimer = setInterval(() => {
+    introSec--;
+    if (introSec > 0) {
+      introCountdown.textContent = `Starting in ${introSec}…`;
+    } else {
+      clearInterval(introTimer);
+      introEl.style.transition = 'opacity 0.5s';
+      introEl.style.opacity = '0';
+      setTimeout(() => {
+        introEl.style.display = 'none';
+        startSequence();
+      }, 500);
+    }
+  }, 1000);
+}
+
+// Pulse animation for dot
+const style = document.createElement('style');
+style.textContent = `
+@keyframes pulse { 0%,100%{opacity:.25;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>

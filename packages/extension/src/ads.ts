@@ -8,11 +8,11 @@ export interface Ad {
 }
 
 export const DEMO_ADS: Ad[] = [
-  { name: 'Supabase', logo: 'S', color: '#3ecf8e', tagline: "Postgres, but you'll actually ship this weekend.", ctaText: 'Start free →', ctaUrl: 'https://supabase.com' },
-  { name: 'Railway',  logo: 'R', color: '#b835ff', tagline: 'Deploy any project in seconds. No DevOps required.', ctaText: 'Deploy now →', ctaUrl: 'https://railway.app' },
-  { name: 'Fly.io',   logo: '✈', color: '#7b61ff', tagline: 'Run your apps close to your users. Globally.', ctaText: 'Get started →', ctaUrl: 'https://fly.io' },
-  { name: 'Resend',   logo: '✉', color: '#f97316', tagline: 'The email API devs actually love. Ship faster.', ctaText: 'Try free →', ctaUrl: 'https://resend.com' },
-  { name: 'Linear',   logo: 'L', color: '#5e6ad2', tagline: 'The issue tracker built for high-performance teams.', ctaText: 'See Linear →', ctaUrl: 'https://linear.app' },
+  { name: 'Vercel',  logo: '▲', color: '#c9a96e', tagline: 'Ship frontend apps with zero config. From git push to live URL.', ctaText: 'Deploy free →', ctaUrl: 'https://vercel.com' },
+  { name: 'Railway', logo: '🚂', color: '#b835ff', tagline: 'Deploy any project in seconds. No DevOps required.',            ctaText: 'Start now →',   ctaUrl: 'https://railway.app' },
+  { name: 'Clerk',   logo: '⚡', color: '#6c47ff', tagline: 'Auth that just works. Add login to your app in minutes.',        ctaText: 'Try free →',    ctaUrl: 'https://clerk.com' },
+  { name: 'Resend',  logo: '✉',  color: '#f97316', tagline: 'The email API devs actually love. Ship transactional email fast.', ctaText: 'Get started →', ctaUrl: 'https://resend.com' },
+  { name: 'Linear',  logo: 'L',  color: '#5e6ad2', tagline: 'Issue tracking built for high-performance teams.',               ctaText: 'See Linear →',  ctaUrl: 'https://linear.app' },
 ];
 
 let demoIndex = 0;
